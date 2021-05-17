@@ -1,65 +1,70 @@
 function convertToRoman(num) {
-  const denoms = {
-    one: { sym: 'I' },
-    five: { sym: 'V' },
-    ten: { sym: 'X' },
-    fifty: { sym: 'L' },
-    hundred: { sym: 'C' },
-    five_hundred: { sym: 'D' },
-    thousand: { sym: 'M' },
-    five_thousand: { sym: 'ↁ' },
-    ten_thousand: { sym: 'ↂ' }
+  const symbols = {
+    1: {
+      baseSymbol: 'I',
+      midSymbol: 'V',
+      highSymbol: 'X'
+    },
+    10: {
+      baseSymbol: 'X',
+      midSymbol: 'L',
+      highSymbol: 'C'
+    },
+    100: {
+      baseSymbol: 'C',
+      midSymbol: 'D',
+      highSymbol: 'M'
+    },
+    1000: {
+      baseSymbol: 'M',
+      midSymbol: 'ↁ',
+      highSymbol: 'ↂ'
+    }
   };
-  const numstr = num.toString().split('');
-  const len = numstr.length;
-  let base = 0;
-  let value = 0;
-  let romanStr = '';
-  let baseMarker, midMarker, highMarker;
-  const parts = numstr
-    .map((n, i) => {
+  const numArr = num.toString().split('');
+  const len = numArr.length;
+
+  const romanStr = numArr
+    .map((num, i) => {
+      if (num === 0) return;
       return (
-        n +
+        num +
         Array(len - i - 1)
           .fill(0)
           .join('')
       );
     })
-    .map(Number)
-    .filter(num => num !== 0);
-  for (let i = 0; i < parts.length; i++) {
-    let partLen = parts[i].toString().length - 1;
-    base = Math.pow(10, partLen).toString();
-    value = parseInt(parts[i].toString()[0]);
-    if (base == 1000) {
-      baseMarker = denoms.thousand.sym;
-      midMarker = denoms.five_thousand.sym;
-      highMarker = denoms.ten_thousand.sym;
-    }
-    if (base == 100) {
-      baseMarker = denoms.hundred.sym;
-      midMarker = denoms.five_hundred.sym;
-      highMarker = denoms.thousand.sym;
-    }
-    if (base == 10) {
-      baseMarker = denoms.ten.sym;
-      midMarker = denoms.fifty.sym;
-      highMarker = denoms.hundred.sym;
-    }
-    if (base == 1) {
-      baseMarker = denoms.one.sym;
-      midMarker = denoms.five.sym;
-      highMarker = denoms.ten.sym;
-    }
+    .map(part => {
+      const strVal = part.toString();
+      const partLen = strVal.length - 1;
 
-    if (value < 4) romanStr += baseMarker.repeat(value);
-    if (value == 4) romanStr += baseMarker + midMarker;
-    if (value == 5) romanStr += midMarker;
-    if (value > 5 && value < 9)
-      romanStr += midMarker + baseMarker.repeat(value - 5);
-    if (value == 9) romanStr += baseMarker + highMarker;
-  }
+      const partObj = {
+        base: Math.pow(10, partLen).toString(),
+        value: parseInt(strVal[0])
+      };
+      for (let key in symbols) {
+        if (partObj.base === key.toString())
+          return {[partObj.value]: symbols[key]};
+      }
+    })
+    .reduce((acc, curr) => {
+      for (let value in curr) {
+        const {baseSymbol, midSymbol, highSymbol} = curr[value];
+        value = parseInt(value);
+        if (!acc) acc = [];
+        value < 4 && acc.push(baseSymbol.repeat(value));
+        value === 4 && acc.push(baseSymbol + midSymbol);
+        value === 5 && acc.push(midSymbol);
+        value > 5 &&
+          value < 9 &&
+          acc.push(midSymbol + baseSymbol.repeat(value - 5));
+        value === 9 && acc.push(baseSymbol + highSymbol);
+      }
+      return acc;
+    }, [])
+    .join('');
+
   return romanStr;
 }
 
-console.log(convertToRoman(29));
+console.log(convertToRoman(608));
