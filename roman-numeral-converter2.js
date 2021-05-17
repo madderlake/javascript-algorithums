@@ -1,31 +1,30 @@
 function convertToRoman(num) {
   const symbols = {
     1: {
-      baseMarker: 'I',
-      midMarker: 'V',
-      highMarker: 'X'
+      baseSymbol: 'I',
+      midSymbol: 'V',
+      highSymbol: 'X'
     },
     10: {
-      baseMarker: 'X',
-      midMarker: 'L',
-      highMarker: 'C'
+      baseSymbol: 'X',
+      midSymbol: 'L',
+      highSymbol: 'C'
     },
     100: {
-      baseMarker: 'C',
-      midMarker: 'D',
-      highMarker: 'M'
+      baseSymbol: 'C',
+      midSymbol: 'D',
+      highSymbol: 'M'
     },
     1000: {
-      baseMarker: 'M',
-      midMarker: 'ↁ',
-      highMarker: 'ↂ'
+      baseSymbol: 'M',
+      midSymbol: 'ↁ',
+      highSymbol: 'ↂ'
     }
   };
   const numArr = num.toString().split('');
   const len = numArr.length;
-  let romanStr = [];
 
-  numArr
+  const romanStr = numArr
     .map((num, i) => {
       if (num === 0) return;
       return (
@@ -48,21 +47,24 @@ function convertToRoman(num) {
           return {[partObj.value]: symbols[key]};
       }
     })
-    .map(obj => {
-      for (let value in obj) {
-        const {baseMarker, midMarker, highMarker} = obj[value];
+    .reduce((acc, curr) => {
+      for (let value in curr) {
+        const {baseSymbol, midSymbol, highSymbol} = curr[value];
         value = parseInt(value);
-
-        value < 4 && romanStr.push(baseMarker.repeat(value));
-        value === 4 && romanStr.push(baseMarker + midMarker);
-        value === 5 && romanStr.push(midMarker);
+        if (!acc) acc = [];
+        value < 4 && acc.push(baseSymbol.repeat(value));
+        value === 4 && acc.push(baseSymbol + midSymbol);
+        value === 5 && acc.push(midSymbol);
         value > 5 &&
           value < 9 &&
-          romanStr.push(midMarker + baseMarker.repeat(value - 5));
-        value === 9 && romanStr.push(baseMarker + highMarker);
+          acc.push(midSymbol + baseSymbol.repeat(value - 5));
+        value === 9 && acc.push(baseSymbol + highSymbol);
       }
-    });
-  return romanStr.join('');
+      return acc;
+    }, [])
+    .join('');
+
+  return romanStr;
 }
 
 console.log(convertToRoman(608));
