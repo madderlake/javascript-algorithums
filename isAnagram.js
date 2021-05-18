@@ -10,7 +10,7 @@ const isAnagram = (str1, str2) => {
   a1 = a1.sort().join('');
   a2 = a2.sort().join('');
   //Compare the string!
-  return a1 === a2 ? true : false;
+  return a1 === a2;
 };
 
 console.log(isAnagram('adobe', 'abode'));

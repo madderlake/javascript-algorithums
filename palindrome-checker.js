@@ -4,7 +4,7 @@ function palindrome(str) {
   //Take that string, make it an array, reverse it and join it back to str
   let arr2 = arr1.split('').reverse().join('');
   //Compare strings
-  return arr1 === arr2 ? true : false;
+  return arr1 === arr2;
 }
 
 console.log(palindrome('0_0 (: /- :) 0-0'));
